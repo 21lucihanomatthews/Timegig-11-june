@@ -431,7 +431,7 @@ export default function App() {
 
   if (!currentUser) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-950 text-slate-100 p-4 font-sans relative overflow-hidden">
+      <div className="flex items-center justify-center min-h-full h-full w-full bg-slate-950 text-slate-100 p-4 font-sans relative overflow-hidden">
         {/* Ambient glow backgrounds */}
         <div className="absolute top-[-30%] left-[-30%] w-[80%] h-[80%] bg-blue-600/10 rounded-full blur-[150px] pointer-events-none" />
         <div className="absolute bottom-[-30%] right-[-30%] w-[80%] h-[80%] bg-purple-600/10 rounded-full blur-[150px] pointer-events-none" />
@@ -657,7 +657,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex flex-col h-screen h-[100dvh] w-full bg-gray-50 text-gray-900 font-sans overflow-hidden relative">
+    <div className="flex flex-col h-full w-full bg-gray-50 text-gray-900 font-sans overflow-hidden relative">
       {/* Real-time Toast Notifications */}
       <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-full max-w-sm px-4 space-y-2 pointer-events-none">
         <AnimatePresence>
@@ -785,7 +785,13 @@ export default function App() {
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="flex-shrink-0 bg-white border-t border-gray-200 h-16 sm:h-20 flex justify-around items-center px-2 sm:px-6 z-20 pb-[env(safe-area-inset-bottom)] shadow-[0_-2px_10px_rgba(0,0,0,0.04)]">
+      <nav 
+        className="flex-shrink-0 bg-white border-t border-gray-200 flex justify-around items-center px-2 sm:px-6 z-20 shadow-[0_-2px_10px_rgba(0,0,0,0.04)] min-h-[4.25rem] sm:min-h-[5rem]"
+        style={{
+          paddingTop: '0.4rem',
+          paddingBottom: 'calc(0.4rem + env(safe-area-inset-bottom, 0px))'
+        }}
+      >
         <NavItem
           id="nav-seekers"
           icon={<div className="bg-gradient-to-br from-purple-400 to-purple-600 p-2 rounded-xl shadow-lg border border-white/20"><Users size={20} className="text-white" /></div>}

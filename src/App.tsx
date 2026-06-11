@@ -377,6 +377,58 @@ export default function App() {
     }
   };
 
+  const handleApproveApplication = (app: GigApplication) => {
+    // 1. Update application status to approved
+    setApplications(prev => prev.map(a => a.id === app.id ? {...a, status: 'approved'} : a));
+
+    // Get gig definition
+    const gig = gigs.find(g => g.id === app.gigId);
+    const gigDescSnippet = gig && gig.description ? (gig.description.length > 30 ? `${gig.description.substring(0, 30)}...` : gig.description) : 'your gig';
+
+    // Get seeker details
+    const seeker = seekers.find(s => s.id === app.seekerId);
+    const seekerName = seeker?.fullName || app.seekerName || 'Helper';
+    const seekerPic = seeker?.profilePic || app.seekerPic || null;
+    const seekerRole = seeker?.workDescription || 'Verified Helper';
+
+    // 2. Add or resume chat thread
+    setChats(prevChats => {
+      const existingIdx = prevChats.findIndex(c => c.id === app.seekerId);
+      
+      const newSystemMsg = {
+        id: 'msg-approve-' + Date.now(),
+        sender: 'me',
+        text: `🎉 Application Approved! I've approved your application to help with "${gigDescSnippet}". Let's arrange scheduling and execution details here!`,
+        time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
+      };
+
+      if (existingIdx > -1) {
+        const updatedChats = [...prevChats];
+        updatedChats[existingIdx] = {
+          ...updatedChats[existingIdx],
+          messages: [...updatedChats[existingIdx].messages, newSystemMsg]
+        };
+        return updatedChats;
+      } else {
+        const newChat = {
+          id: app.seekerId,
+          contactName: seekerName,
+          role: seekerRole,
+          profilePic: seekerPic,
+          messages: [newSystemMsg]
+        };
+        return [newChat, ...prevChats];
+      }
+    });
+
+    // 3. Switch tab and select active contact profile chat
+    setActiveTab('messages');
+    setActiveChatContactId(app.seekerId);
+    setActiveOverlay(null);
+
+    addNotification(`💬 Continuing to Chat with ${seekerName}!`, 'success');
+  };
+
   if (!currentUser) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-slate-950 text-slate-100 p-4 font-sans relative overflow-hidden">
@@ -681,7 +733,7 @@ export default function App() {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto relative bg-gray-50">
+      <main className="flex-1 overflow-y-auto relative bg-gray-50 pb-16 sm:pb-20">
         <AnimatePresence mode="wait">
           {activeTab === 'gigs' && (
             <div key="gigs">
@@ -710,9 +762,7 @@ export default function App() {
             <div key="apps">
               <ApplicationsView
                 applications={applications.filter(a => gigs.find(g => g.id === a.gigId)?.ownerId === currentUserId)}
-                onApprove={(app) => {
-                  setApplications(prev => prev.map(a => a.id === app.id ? {...a, status: 'approved'} : a));
-                }}
+                onApprove={handleApproveApplication}
                 onReject={(app) => setApplications(prev => prev.map(a => a.id === app.id ? {...a, status: 'rejected'} : a))}
                 seekers={seekers}
                 userProfile={userProfile}
@@ -722,7 +772,7 @@ export default function App() {
             </div>
           )}
           {activeTab === 'messages' && (
-            <div key="messages" className="absolute inset-0 flex flex-col overflow-hidden">
+            <div key="messages" className="absolute inset-0 flex flex-col overflow-hidden pb-16 sm:pb-20">
               <ChatView
                 chats={chats}
                 setChats={setChats}
@@ -735,7 +785,7 @@ export default function App() {
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="flex-shrink-0 bg-white border-t border-gray-200 h-16 sm:h-20 flex justify-around items-center px-2 sm:px-6 z-20 pb-safe">
+      <nav className="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 h-16 sm:h-20 flex justify-around items-center px-2 sm:px-6 z-20 pb-safe shadow-[0_-2px_10px_rgba(0,0,0,0.04)]">
         <NavItem
           id="nav-seekers"
           icon={<div className="bg-gradient-to-br from-purple-400 to-purple-600 p-2 rounded-xl shadow-lg border border-white/20"><Users size={20} className="text-white" /></div>}
@@ -785,9 +835,7 @@ export default function App() {
             userProfile={userProfile} 
             setUserProfile={setUserProfile} 
             myApplications={applications.filter(a => gigs.find(g => g.id === a.gigId)?.ownerId === currentUserId)}
-            onApproveApplication={(app) => {
-               setApplications(prev => prev.map(a => a.id === app.id ? {...a, status: 'approved'} : a));
-            }}
+            onApproveApplication={handleApproveApplication}
             onRejectApplication={(app) => setApplications(prev => prev.map(a => a.id === app.id ? {...a, status: 'rejected'} : a))}
             onLogout={handleLogout}
           />

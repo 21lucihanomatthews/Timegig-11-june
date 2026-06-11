@@ -657,7 +657,7 @@ export default function App() {
   }
 
   return (
-    <div className="flex flex-col h-screen w-full bg-gray-50 text-gray-900 font-sans overflow-hidden relative">
+    <div className="flex flex-col h-screen h-[100dvh] w-full bg-gray-50 text-gray-900 font-sans overflow-hidden relative">
       {/* Real-time Toast Notifications */}
       <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-full max-w-sm px-4 space-y-2 pointer-events-none">
         <AnimatePresence>
@@ -733,7 +733,7 @@ export default function App() {
       </header>
 
       {/* Main Content Area */}
-      <main className="flex-1 overflow-y-auto relative bg-gray-50 pb-16 sm:pb-20">
+      <main className="flex-1 overflow-y-auto relative bg-gray-50">
         <AnimatePresence mode="wait">
           {activeTab === 'gigs' && (
             <div key="gigs">
@@ -772,7 +772,7 @@ export default function App() {
             </div>
           )}
           {activeTab === 'messages' && (
-            <div key="messages" className="absolute inset-0 flex flex-col overflow-hidden pb-16 sm:pb-20">
+            <div key="messages" className="absolute inset-0 flex flex-col overflow-hidden">
               <ChatView
                 chats={chats}
                 setChats={setChats}
@@ -785,7 +785,7 @@ export default function App() {
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 inset-x-0 bg-white border-t border-gray-200 h-16 sm:h-20 flex justify-around items-center px-2 sm:px-6 z-20 pb-safe shadow-[0_-2px_10px_rgba(0,0,0,0.04)]">
+      <nav className="flex-shrink-0 bg-white border-t border-gray-200 h-16 sm:h-20 flex justify-around items-center px-2 sm:px-6 z-20 pb-[env(safe-area-inset-bottom)] shadow-[0_-2px_10px_rgba(0,0,0,0.04)]">
         <NavItem
           id="nav-seekers"
           icon={<div className="bg-gradient-to-br from-purple-400 to-purple-600 p-2 rounded-xl shadow-lg border border-white/20"><Users size={20} className="text-white" /></div>}

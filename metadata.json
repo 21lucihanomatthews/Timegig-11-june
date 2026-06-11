@@ -1,0 +1,6 @@
+{
+  "name": "Gig Platform",
+  "description": "An empty web app platform with a bottom navigation menu featuring GIGs, Chat, and Seekers views.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
